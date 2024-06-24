@@ -89,7 +89,7 @@ print("start_task_response: {}".format(start_task_response))
 print("Waiting for task to finish")
 
 status = ""
-get_status = "{} --xml '<get_tasks task_id=\"{}\"/>'".format(omp_logon, task_id)
+get_status = "{} --xml '<get_tasks task_id=\"{}\" filter=\"overrides=1 levels=hml notes=1 min_qod=70 autofp=0\"/>'".format(omp_logon, task_id)
 
 while status != "Done":
 	try:
@@ -114,8 +114,14 @@ print("report_id: {}".format(report_id))
 report_formats = [("html", "6c248850-1f62-11e1-b082-406186ea4fc5"), ("xml", "a994b278-1f62-11e1-96ac-406186ea4fc5")]
 
 for report_format, report_format_id in report_formats:
-    get_report = "{} -R {} -f {}".format(omp_logon, report_id, report_format_id)
+    # -X '<get_reports report_id="c3bba6f4-0bca-435b-a87d-3f7cd23486dc" format_id="6c248850-1f62-11e1-b082-406186ea4fc5"
+    # get_report = "{} -R {} -f {}".format(omp_logon, report_id, report_format_id)
+    # --xml=<get_reports report_id="8b8750e2-ecd0-4234-86d5-09ba22136b81" format_id="c402cc3e-b531-11e1-9163-406186ea4fc5" filter="overrides=1,levels=hml,notes=1,min_qod=70,autofp=0"/>
+    # filter="overrides=1 levels=hml notes=1 min_qod=70 autofp=0"
+
+    get_report = "{} --xml '<get_reports report_id=\"{}\" format_id=\"{}\" filter=\"overrides=1 levels=hml notes=1 min_qod=70 autofp=0\"/>'".format(omp_logon, report_id, report_format_id)
     report_response = subprocess.check_output(get_report, stderr=subprocess.STDOUT, shell=True)
+    print("Report options: ", get_report)
     print("{}-report: {}...".format(report_format.upper(), report_response[:30]))
 
     report_filename = os.path.split(outputfile)[1]
